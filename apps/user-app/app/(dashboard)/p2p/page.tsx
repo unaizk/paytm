@@ -1,3 +1,4 @@
+
 import {SendCard} from '../../../components/SendCard'
 import {P2pTransferTransaction} from '../../../components/P2pTransferTransaction'
 import { getServerSession } from "next-auth";
@@ -35,8 +36,11 @@ async function getP2pTransactions() {
 }
 
 export default async function P2pTransfer() {
+    
     const balance = await getBalance();
     const transactions = await getP2pTransactions();
+
+    
     return (
         <div className="w-screen">
         <div className="text-4xl text-[#6a51a6] pt-8 mb-8 font-bold">
