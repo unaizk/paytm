@@ -8,7 +8,6 @@ export function AppbarClient() {
   const router = useRouter();
 
   return (
-    
    <div>
       <Appbar onSignin={signIn} onSignout={async () => {
         await signOut()
