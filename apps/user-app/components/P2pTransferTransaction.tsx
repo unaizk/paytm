@@ -1,14 +1,13 @@
 import { Card } from "@repo/ui/card"
+import  prisma  from "@repo/db/client";
 
-export const OnRampTransactions = ({
+export const P2pTransferTransaction = async({
     transactions
 }: {
     transactions: {
-        time: Date,
-        amount: number,
-        // TODO: Can the type of `status` be more specific?
-        status: string,
-        provider: string
+      time: Date,
+      amount: number,
+      toUser : number
     }[]
 }) => {
     if (!transactions.length) {
@@ -18,19 +17,31 @@ export const OnRampTransactions = ({
             </div>
         </Card>
     }
+
+    const transactionsWithUsernames = await Promise.all(transactions.map(async (t) => {
+      const toUser = await prisma.user.findUnique({
+          where: {
+              id: t.toUser
+          }
+      });
+      return {
+          ...t,
+          toUsername: toUser?.name || "Unknown User"
+      };
+  }));
     return <Card title="Recent Transactions">
         <div className="pt-2">
-            {transactions.map(t => <div className="flex justify-between border-b">
+            {transactionsWithUsernames.map(t => <div className="flex justify-between border-b">
                 <div >
                     <div className="text-sm">
-                        Received INR
+                     Sent INR
                     </div>
                     <div className="text-slate-600 text-xs">
-                       Date : {t.time.toDateString()}
+                       
+                       To : {t.toUsername}
                     </div>
-                    <div className="flex text-xs ">
-                       <p  className="text-slate-600">Status :  </p>  <p className={`${t.status === 'Processing' ? 'text-blue-600' : t.status === 'Failure' ? 'text-red-600' : t.status === 'Success' ? 'text-green-600' : 'text-slate-600'} `}>   {t.status}</p>
-                        
+                    <div className="text-slate-600 text-xs ">
+                     Date : {t.time.toDateString()}
                     </div>
                 </div>
                 <div className="flex flex-col justify-center">
